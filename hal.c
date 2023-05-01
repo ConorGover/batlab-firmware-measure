@@ -1101,7 +1101,13 @@ void measurement_handler()
             // Latch in CURRENT measurement
             if(cellregs[timeslice][REG_MODE] == MODE_CHARGE || cellregs[timeslice][REG_MODE] == MODE_DISCHARGE || cellregs[timeslice][REG_MODE] == MODE_IMPEDANCE || cellregs[timeslice][REG_MODE] == MODE_CV_CHARGE || cellregs[timeslice][REG_MODE] == MODE_CV_DISCHARGE)
             {
-                c = ((csum[timeslice] << 8) / cellregs[timeslice][REG_CURRENT_CALIB_SCA])  - (int16_t)cellregs[timeslice][REG_CURRENT_CALIB_OFF];
+                c = (csum[timeslice] << 8) / cellregs[timeslice][REG_CURRENT_CALIB_SCA];
+                if (c > (int16_t)cellregs[timeslice][REG_CURRENT_CALIB_OFF]) {
+                    c -= (int16_t)cellregs[timeslice][REG_CURRENT_CALIB_OFF];
+                }
+                else {
+                    c = 0;
+                }
                 v = ( (cellregs[timeslice][REG_MODE] == MODE_CHARGE) || (cellregs[timeslice][REG_MODE == MODE_CV_CHARGE]) ) ? (36408L - (int32_t)cellregs[timeslice][REG_VOLTAGE]) : (cellregs[timeslice][REG_VOLTAGE]); 
                 v -= (c << 10) / (int32_t)cellregs[timeslice][REG_CURR_LOWV_SCA];
                 if (v < cellregs[timeslice][REG_CURR_LOWV_OFF])
